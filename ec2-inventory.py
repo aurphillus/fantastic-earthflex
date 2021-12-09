@@ -82,7 +82,7 @@ class InstanceInventory:
         :param instance: instance to create record for
         :param region: region of instance
         """
-
+        print(instance)
         record = {}
         record["id"] = instance["InstanceId"]
         # tags
@@ -127,11 +127,8 @@ class InstanceInventory:
 
     def controller(self):
         regions = self.get_all_regions()
-        regions = ["ap-south-1"]
         for region in regions:
-            print("Region: " + region)
-            # instances = self.get_all_instances(region)
-            instances = self.get_all_instances_by_tag(region, "Type")
+            instances = self.get_all_instances(region)
             for instance in instances:
                 self.instance_record(instance, region)
 
@@ -142,5 +139,9 @@ class InstanceInventory:
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument("-p", "--Profile", help = "Enter the aws profile name to be used")
-    ec2 = InstanceInventory(parser.parse_args().Profile)
-    ec2.controller()
+    print(parser.parse_args().Profile)
+    if parser.parse_args().Profile == None:
+        parser.error("Please enter the profile name")
+    else:
+        ec2 = InstanceInventory(parser.parse_args().Profile)
+        ec2.controller()
