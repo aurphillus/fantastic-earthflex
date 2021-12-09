@@ -132,11 +132,11 @@ class InstanceInventory:
             instances = self.get_all_instances(region)
             for instance in instances:
                 self.instance_record(instance, region)
-
-        df = pd.DataFrame(self.holding)
-        print(df)
-        df.to_csv("instances.csv",index=False)
-
+        if len(self.holding) > 0:
+            df = pd.DataFrame(self.holding)
+            df.to_csv(self.csv_name, index=False)
+        else:
+            raise Exception("No instances found")
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument("-p", "--Profile", help = "Enter the aws profile name to be used")
