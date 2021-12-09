@@ -8,6 +8,7 @@ class InstanceInventory:
     
     # init function
     def __init__(self,profile):
+        self.csv_name = f"inventory-{profile}.csv"
         self.aws_service = "ec2"
         self.session = boto3.Session(profile_name=profile)
         self.holding = []
