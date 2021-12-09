@@ -2,16 +2,14 @@ import boto3
 import botocore
 import pandas as pd
 import datetime
-
-holding = []
+import argparse
 
 class InstanceInventory:
     
     # init function
-    def __init__(self):
+    def __init__(self,profile):
         self.aws_service = "ec2"
-        self.session = boto3.Session(profile_name="default")
-        # self.session = boto3.Session(profile_name='personal')
+        self.session = boto3.Session(profile_name=profile)
         self.holding = []
 
     def get_all_regions(self) -> list:
@@ -124,7 +122,7 @@ class InstanceInventory:
                 diff_time = f"{diff_time} hours"
             record["uptime"] = str(diff_time)
         record["region"] = region
-        holding.append(record)
+        self.holding.append(record)
         return record
 
     def controller(self):
@@ -137,10 +135,12 @@ class InstanceInventory:
             for instance in instances:
                 self.instance_record(instance, region)
 
-        df = pd.DataFrame(holding)
+        df = pd.DataFrame(self.holding)
         print(df)
         df.to_csv("instances.csv",index=False)
 
 if __name__ == "__main__":
-    ec2 = InstanceInventory()
+    parser = argparse.ArgumentParser()
+    parser.add_argument("-p", "--Profile", help = "Enter the aws profile name to be used")
+    ec2 = InstanceInventory(parser.parse_args().Profile)
     ec2.controller()
